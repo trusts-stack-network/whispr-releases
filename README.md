@@ -1,39 +1,93 @@
-# 🔇 Whispr
+# Whispr
 
-**Decentralized. Private. Encrypted. No trace.**
+**Decentralized. Private. No trace.**
 
-Whispr is a peer-to-peer social network where your identity is a seed phrase, your messages are end-to-end encrypted, and no IP address is ever exposed. Think Discord + Twitter, but decentralized and anonymous.
+Whispr is a peer-to-peer social network where your identity is a seed phrase, your messages travel through a decentralized mesh, and no IP address is ever exposed. Think Discord + Twitter + Medium, but decentralized and private.
 
-> ⚠️ **v0.1.0 — Early Development** — Core networking works. Security hardening (E2E encryption, message signing, encrypted storage) is actively being implemented. Not yet recommended for sensitive communications.
+**[Launch App](https://whispr.tsnchain.com)** | **[Landing Page](https://tsnchain.com/whispr.html)** | **[TSN Ecosystem](https://tsnchain.com)**
+
+> **v0.2.0** — Blog/Articles, Polls, Threads, Search, Disappearing Messages, Auto-Moderation, AI Rules, and 30+ new features. E2E encryption coming in v0.3.0.
 
 ## Features
 
-- **P2P Network** — No central server. Nodes gossip messages via libp2p
-- **No IP Exposed** — Nodes communicate using cryptographic IDs only
-- **Seed Phrase Auth** — No email, no phone. Your 24-word seed IS your account
-- **Circles** — Group chats with rooms, roles (Owner/Admin/Mod/Member), invitations
-- **Feed** — Public posts with hashtags, likes, reposts, rich text formatting
-- **AI Assistant** — Summarize channels, translate messages, format text
-- **Auto-Update** — Nodes update themselves from GitHub releases
-- **Lightweight** — ~7MB binary, ~100MB RAM, runs on a Raspberry Pi
+### Social
+- **Whisps** — Short posts (like tweets). Create, edit, delete, upvote/downvote
+- **Articles** — Long-form blog with title, cover image, reading time, flair categories
+- **Feed Sorting** — Recent / Hot / Top / Following tabs
+- **Comments** — On whisps and articles
+- **Profiles** — Avatar, banner, bio, whisp/article count, followers/following
+- **Discover** — Find people and circles, see circles in common
+- **Friends** — Send requests, accept/decline, dedicated friends page
+
+### Communities (Circles)
+- **Circles** — Public or private groups with rooms, roles, invitations
+- **Roles** — Owner > Admin > Mod > Member with hierarchy enforcement
+- **Room Types** — Text, Announce (mod+ only)
+- **Room Categories** — Organize rooms into categories (server-persisted)
+- **Message Pinning** — Pin important messages (mod+)
+- **Polls** — Create polls with multiple options, real-time votes
+- **Search** — Fulltext search across messages
+- **Typing Indicator** — "X is typing..."
+- **Slowmode** — Anti-spam cooldown per room (5s to 1h)
+- **Auto-Moderation** — Word filter rules (delete/warn/mute)
+- **AI Rules Configurator** — Configure moderation in natural language
+- **Scheduled Events** — Plan events in circles
+- **Room Bookmarks** — Pin useful links per room
+- **Room Permissions** — Per-role read/write overrides
+- **Onboarding** — Welcome message for new members
+- **Ban System** — Ban/unban, prevents rejoin
+
+### Direct Messages
+- **Server-synced DMs** — Not local, synced via node API
+- **Disappearing Messages** — Timer: 5min, 1h, 24h, 7d
+- **View-Once Media** — Image deleted after first view
+- **Notifications** — Bell badge for DMs + friend requests
+
+### Chat
+- **Rich Text** — Bold, italic, strike, code, colors, @mentions, #room links
+- **Edit Message Modal** — Full editor with formatting + AI Magic Edit
+- **Emoji Reactions** — Quick reactions on any message
+- **Image Sharing** — Drag & drop, WebP compression, lightbox
+- **Reply / Forward** — Quote and copy messages
+- **Message Scheduling** — Send messages at a scheduled time
+- **Line Breaks** — Shift+Enter for multiline
+
+### AI Assistant
+- **AI Panel** — Sidebar with room context (last 20 messages)
+- **Quick Actions** — Summarize, Translate (10 languages), Reply, Brainstorm, Format
+- **AI in Chat** — Translate & format before sending
+- **AI Message Editor** — Edit messages with natural language ("make it bold, add emojis...")
+- **AI Circle Rules** — Configure moderation via natural language
+- **Providers** — Groq + Gemini (direct browser calls, keys in Settings)
+
+### Infrastructure
+- **P2P Network** — libp2p gossipsub, mDNS, Noise encrypted transport
+- **5 Nodes** — 1 main + 4 seeds, DB sync every 2min via HTTP
+- **60+ API Endpoints** — axum REST API
+- **20+ Database Tables** — SQLite WAL with auto-migration
+- **Background Tasks** — Cleanup expired messages, send scheduled messages
+- **2 Themes** — Midnight (dark) + Daylight (light)
+- **5 Languages** — EN, FR, ES, RU, ZH
+- **~7.6MB Binary** — Lightweight, runs anywhere
 
 ## Quick Start
 
 ### Download
 
-Grab the latest release from the [Releases page](https://github.com/trusts-stack-network/whispr-releases/releases):
-
 ```bash
 # Linux
-curl -LO https://github.com/trusts-stack-network/whispr-releases/releases/latest/download/whispr-node-linux-amd64
+curl -LO https://github.com/trusts-stack-network/whispr/releases/latest/download/whispr-node-linux-amd64
 chmod +x whispr-node-linux-amd64
 ./whispr-node-linux-amd64
 ```
 
-```powershell
-# Windows
-Invoke-WebRequest -Uri https://github.com/trusts-stack-network/whispr-releases/releases/latest/download/whispr-node-windows-amd64.exe -OutFile whispr-node.exe
-.\whispr-node.exe
+### Build from source
+
+```bash
+git clone https://github.com/trusts-stack-network/whispr.git
+cd whispr
+cargo build --release
+./target/release/whispr-node
 ```
 
 ### Run
@@ -45,7 +99,7 @@ Invoke-WebRequest -Uri https://github.com/trusts-stack-network/whispr-releases/r
 Options:
 ```
 -p, --port <PORT>          P2P port [default: 7777]
--a, --api-port <API_PORT>  API port for frontend [default: 7778]
+-a, --api-port <API_PORT>  API port [default: 7778]
 -d, --data-dir <DIR>       Data directory [default: ./data]
 -b, --bootstrap <ADDR>     Bootstrap node multiaddr
     --no-update            Disable auto-update
@@ -56,6 +110,7 @@ Options:
 
 ```bash
 ./whispr-node \
+  -b /ip4/45.145.165.223/tcp/7777 \
   -b /ip4/151.240.19.253/tcp/7777 \
   -b /ip4/45.145.164.76/tcp/7777 \
   -b /ip4/146.19.168.71/tcp/7777 \
@@ -89,131 +144,106 @@ sudo systemctl enable --now whispr-node
 ## Architecture
 
 ```
-whispr-node (single Rust binary, ~7MB)
+whispr-node (Rust binary, ~7.6MB)
 ├── P2P Layer (libp2p)
 │   ├── Gossipsub — Message propagation
 │   ├── mDNS — Local peer discovery
 │   ├── Noise — Encrypted transport
 │   └── Identify — Peer identification
-├── Storage (SQLite WAL)
-│   ├── Messages, Profiles, Circles
-│   └── Rooms, Peers, Config
-├── API (axum HTTP)
-│   ├── GET  /api/status
-│   ├── GET  /api/feed
-│   ├── POST /api/feed/post
-│   └── GET  /api/profiles
-├── Crypto
-│   ├── Ed25519 node identity
-│   ├── SHA-256 hashing
-│   └── Whispr addresses (wh1sp3r_*)
-└── Auto-Update
-    └── GitHub releases checker
+├── Storage (SQLite WAL, 20+ tables)
+│   ├── feed_posts, feed_votes, feed_comments
+│   ├── circles, circle_members, circle_bans
+│   ├── rooms, room_messages, room_categories
+│   ├── pinned_messages, room_bookmarks, room_permissions
+│   ├── polls, poll_votes, events
+│   ├── direct_messages, friend_requests, friends
+│   ├── auto_mod_rules, scheduled_messages
+│   └── profiles, peers, invite_codes, node_config
+├── API (axum, 60+ endpoints)
+│   ├── /api/v2/feed/* — Blog/Articles
+│   ├── /api/circles/* — Communities
+│   ├── /api/rooms/* — Messages, pins, search, polls
+│   ├── /api/dm/* — Direct messages
+│   ├── /api/friends/* — Friend system
+│   ├── /api/polls/* — Polls
+│   ├── /api/events/* — Events
+│   ├── /api/automod/* — Auto-moderation
+│   ├── /api/search — Fulltext search
+│   └── /api/sync/* — Node-to-node sync
+├── Background Tasks
+│   ├── Cleanup expired messages (30s)
+│   ├── Send scheduled messages (30s)
+│   └── DB sync from peers (2min)
+└── Crypto
+    ├── Ed25519 node identity
+    └── BIP39 user identity
 ```
+
+## Roadmap
+
+### v0.1.0 — Foundation (Done)
+- [x] P2P gossip network (libp2p)
+- [x] Circles with rooms, roles, invitations
+- [x] Feed with posts
+- [x] DMs, Friend system
+- [x] AI Assistant
+- [x] 5 nodes deployed
+
+### v0.2.0 — Blog & Engagement (Done)
+- [x] Whisps + Articles (blog system)
+- [x] Upvote/Downvote, Feed sorting
+- [x] Polls, Threads, Message pinning
+- [x] Search, Typing indicator
+- [x] Slowmode, Auto-moderation, AI Rules
+- [x] Disappearing messages, View-once media
+- [x] Events, Bookmarks, Permissions
+- [x] Banner upload, Profile improvements
+- [x] 60+ API endpoints, 20+ DB tables
+
+### v0.3.0 — Privacy Shield (Next)
+- [ ] E2E encryption (DMs + private circles)
+- [ ] Message signing (Ed25519)
+- [ ] SQLCipher encrypted local DB
+- [ ] Sealed sender metadata protection
+
+### v0.4.0 — Ecosystem
+- [ ] TSN wallet integration
+- [ ] Node rewards (TSN earnings)
+- [ ] Desktop app (Tauri)
+- [ ] Mobile app
 
 ## Node Rewards
 
-**Node operators will be rewarded.** Running a Whispr node contributes to the network's decentralization and availability. A reward mechanism linked to the TSN blockchain is planned — details will be published in a dedicated document. The more reliable your node, the more you earn.
-
-## Security Roadmap
-
-Whispr is committed to becoming a fully private and secure communication platform. Here is our security hardening plan:
-
-### v0.2.0 — Message Integrity (next)
-- [ ] **Ed25519 message signing** — Every message cryptographically signed by its author
-- [ ] **Signature verification** — Nodes reject unsigned or forged messages
-- [ ] **Message deduplication** — Prevent replay attacks
-
-### v0.3.0 — End-to-End Encryption
-- [ ] **DM encryption** — X25519 key exchange + AES-256-GCM for direct messages
-- [ ] **Circle encryption** — Group key distribution for private circles
-- [ ] **Forward secrecy** — Key rotation so past messages stay safe even if a key leaks
-
-### v0.4.0 — Storage Encryption
-- [ ] **SQLCipher** — AES-256 encrypted database at rest
-- [ ] **Encrypted node identity** — Password-protected private key
-- [ ] **Secure key derivation** — Argon2 for seed phrase → key derivation
-
-### v0.5.0 — Anti-Abuse
-- [ ] **Rate limiting** — Per-peer message throttling
-- [ ] **Reputation system** — Node/user scoring based on behavior
-- [ ] **Spam detection** — Pattern-based + AI-assisted filtering
-- [ ] **Link restriction** — New members can't post links until N messages
-- [ ] **Ban propagation** — Kicked users blocked across the network
-
-### v0.6.0 — Audit & Hardening
-- [ ] **Security audit** — Third-party code review
-- [ ] **Penetration testing** — Network attack simulation
-- [ ] **Bug bounty program** — Rewarded vulnerability disclosure
-
-### Current Security Status
-
-| Layer | Status | Detail |
-|-------|--------|--------|
-| P2P transport | ✅ Encrypted | libp2p noise protocol |
-| Node identity | ✅ Secure | Ed25519 keypair, file permissions 600 |
-| IP privacy | ✅ Hidden | Only node IDs exposed, never IPs |
-| Messages in transit | ✅ Encrypted | Noise protocol between peers |
-| Message signatures | ⏳ Planned v0.2.0 | Not yet signed |
-| DM end-to-end | ⏳ Planned v0.3.0 | Transit-only encryption for now |
-| Database at rest | ⏳ Planned v0.4.0 | SQLite not yet encrypted |
-| Anti-spam | ⏳ Planned v0.5.0 | No rate limiting yet |
+**Node operators will be rewarded.** Running a Whispr node contributes to the network's decentralization. A reward mechanism linked to the TSN blockchain is planned. The more reliable your node, the more you earn.
 
 ## Network
 
 | Node | Port | Role | Status |
 |------|------|------|--------|
-| seed-1 | 7777 | Bootstrap | 🟢 Active |
-| seed-2 | 7777 | Bootstrap | 🟢 Active |
-| seed-3 | 7777 | Bootstrap | 🟢 Active |
-| seed-4 | 7777 | Bootstrap | 🟢 Active |
+| node-1 | 7777 | Main | Active |
+| seed-1 | 7777 | Bootstrap | Active |
+| seed-2 | 7777 | Bootstrap | Active |
+| seed-3 | 7777 | Bootstrap | Active |
+| seed-4 | 7777 | Bootstrap | Active |
 
 Anyone can run a node. The more nodes, the stronger the network.
-
-## Roadmap
-
-### Completed
-- [x] P2P gossip network (libp2p)
-- [x] Node identity & crypto (Ed25519)
-- [x] SQLite storage with schema
-- [x] REST API for frontend
-- [x] Auto-update from GitHub releases
-- [x] GitHub Actions CI (Linux + Windows)
-- [x] 4 seed nodes deployed
-
-### In Progress
-- [ ] Security hardening (see Security Roadmap above)
-- [ ] Frontend ↔ node integration
-- [ ] Profile sync across nodes
-- [ ] Circle management via P2P
-
-### Planned
-- [ ] TSN wallet integration (send/receive TSN)
-- [ ] Node rewards (TSN earnings for operators)
-- [ ] Premium circles (TSN payment)
-- [ ] Voice channels
-- [ ] Desktop app (Tauri, ~15MB)
-- [ ] Mobile app
-- [ ] Decentralized moderation (community votes)
 
 ## Tech Stack
 
 - **Language**: Rust
-- **P2P**: libp2p (gossipsub, mDNS, noise, yamux)
-- **Storage**: SQLite (WAL mode)
-- **API**: axum
+- **P2P**: libp2p (gossipsub, mDNS, noise, yamux, quic)
+- **Storage**: SQLite WAL (rusqlite bundled)
+- **API**: axum 0.7
 - **Crypto**: ed25519-dalek, SHA-256
-- **CI/CD**: GitHub Actions (Linux + Windows builds)
 - **Frontend**: React + TypeScript + Tailwind (Vite)
+- **AI**: Groq + Gemini (direct browser calls)
 
 ## Part of the TSN Ecosystem
 
-Whispr is part of the [Trust Stack Network](https://tsnchain.com) ecosystem:
-
-- 🔗 **[TSN Blockchain](https://tsnchain.com)** — Post-quantum blockchain (Rust, ML-DSA-65, Plonky3)
-- 💱 **NetherSwap** — Decentralized exchange
-- 💬 **Whispr** — Decentralized private social network
-- 🔍 **[Explorer](https://explorer.tsnchain.com)** — Blockchain explorer
+- [TSN Blockchain](https://tsnchain.com) — Post-quantum blockchain (Rust, ML-DSA-65, Plonky3)
+- [Explorer](https://explorer.tsnchain.com) — Blockchain explorer
+- [Whispr](https://whispr.tsnchain.com) — Decentralized private social network
+- [NetherSwap](https://tsnchain.com) — Decentralized exchange
 
 ## Contributing
 
