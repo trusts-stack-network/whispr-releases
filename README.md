@@ -6,7 +6,27 @@ Whispr is a peer-to-peer social network where your identity is a seed phrase, yo
 
 **[Launch App](https://whispr.tsnchain.com)** | **[Landing Page](https://tsnchain.com/whispr.html)** | **[TSN Ecosystem](https://tsnchain.com)**
 
-> **v0.2.0** — Blog/Articles, Polls, Threads, Search, Disappearing Messages, Auto-Moderation, AI Rules, and 30+ new features. E2E encryption coming in v0.3.0.
+> **v0.3.0** — UI Premium refonte + E2E Encryption. Message signing (HMAC-SHA256), DM encryption (ECDH P-256 + AES-256-GCM), group keys, rate limiting, anti-replay. Enhanced design tokens, gradient sidebar, message animations, skeleton loaders.
+
+## What's New in v0.3.0
+
+### E2E Encryption
+- **Message Signing** — HMAC-SHA256 signature on every message
+- **DM Encryption** — ECDH P-256 key exchange + AES-256-GCM encryption
+- **Group Keys** — Shared symmetric keys for private circles
+- **Rate Limiting** — 30 messages/min per user
+- **Anti-Replay** — Message deduplication prevents replay attacks
+
+### UI Premium Refonte
+- **Enhanced Design Tokens** — 5-level background system
+- **Gradient Sidebar** — Smooth gradient navigation
+- **Nav Active Accent Bar** — Visual indicator for active tab
+- **Card Hover Effects** — Elevation and subtle border glow
+- **Message Animations** — Fade-in on new messages
+- **Skeleton Loaders** — Loading placeholders for better UX
+- **Focus Rings** — Accessible keyboard navigation
+- **Custom Scrollbar** — Themed scrollbar design
+- **Empty States** — Descriptive icons for empty views
 
 ## Features
 
@@ -39,6 +59,7 @@ Whispr is a peer-to-peer social network where your identity is a seed phrase, yo
 
 ### Direct Messages
 - **Server-synced DMs** — Not local, synced via node API
+- **E2E Encrypted DMs** — ECDH P-256 + AES-256-GCM (v0.3.0)
 - **Disappearing Messages** — Timer: 5min, 1h, 24h, 7d
 - **View-Once Media** — Image deleted after first view
 - **Notifications** — Bell badge for DMs + friend requests
@@ -51,6 +72,13 @@ Whispr is a peer-to-peer social network where your identity is a seed phrase, yo
 - **Reply / Forward** — Quote and copy messages
 - **Message Scheduling** — Send messages at a scheduled time
 - **Line Breaks** — Shift+Enter for multiline
+
+### Security (v0.3.0)
+- **Message Signing** — HMAC-SHA256 on all messages
+- **DM Encryption** — ECDH P-256 + AES-256-GCM
+- **Group Keys** — Symmetric encryption for private circles
+- **Rate Limiting** — 30 msg/min per user
+- **Anti-Replay** — Deduplication prevents replay attacks
 
 ### AI Assistant
 - **AI Panel** — Sidebar with room context (last 20 messages)
@@ -174,10 +202,29 @@ whispr-node (Rust binary, ~7.6MB)
 │   ├── Cleanup expired messages (30s)
 │   ├── Send scheduled messages (30s)
 │   └── DB sync from peers (2min)
-└── Crypto
-    ├── Ed25519 node identity
-    └── BIP39 user identity
+├── Crypto
+│   ├── Ed25519 node identity
+│   ├── BIP39 user identity
+│   └── ECDH P-256 + AES-256-GCM (E2E v0.3.0)
+└── Security (v0.3.0)
+    ├── HMAC-SHA256 message signing
+    ├── Rate limiting (30 msg/min)
+    └── Anti-replay deduplication
 ```
+
+## Security Status
+
+| Layer | Algorithm | Status |
+|-------|-----------|--------|
+| Node Identity | Ed25519 | Active |
+| User Identity | BIP39 (24 words) | Active |
+| Transport | Noise Protocol | Active |
+| Message Signing | HMAC-SHA256 | Active (v0.3.0) |
+| DM Encryption | ECDH P-256 + AES-256-GCM | Active (v0.3.0) |
+| Group Encryption | Symmetric AES-256-GCM | Active (v0.3.0) |
+| Rate Limiting | 30 msg/min | Active (v0.3.0) |
+| Anti-Replay | Deduplication | Active (v0.3.0) |
+| Local DB Encryption | SQLCipher | Planned |
 
 ## Roadmap
 
@@ -200,13 +247,15 @@ whispr-node (Rust binary, ~7.6MB)
 - [x] Banner upload, Profile improvements
 - [x] 60+ API endpoints, 20+ DB tables
 
-### v0.3.0 — Privacy Shield (Next)
-- [ ] E2E encryption (DMs + private circles)
-- [ ] Message signing (Ed25519)
-- [ ] SQLCipher encrypted local DB
-- [ ] Sealed sender metadata protection
+### v0.3.0 — UI Premium + E2E Encryption (Done)
+- [x] UI Premium refonte (design tokens, gradient sidebar, animations, skeleton loaders)
+- [x] E2E encryption (ECDH P-256 + AES-256-GCM)
+- [x] Message signing (HMAC-SHA256)
+- [x] Group keys for private circles
+- [x] Rate limiting (30 msg/min)
+- [x] Anti-replay deduplication
 
-### v0.4.0 — Ecosystem
+### v0.4.0 — Ecosystem (Next)
 - [ ] TSN wallet integration
 - [ ] Node rewards (TSN earnings)
 - [ ] Desktop app (Tauri)
@@ -234,7 +283,7 @@ Anyone can run a node. The more nodes, the stronger the network.
 - **P2P**: libp2p (gossipsub, mDNS, noise, yamux, quic)
 - **Storage**: SQLite WAL (rusqlite bundled)
 - **API**: axum 0.7
-- **Crypto**: ed25519-dalek, SHA-256
+- **Crypto**: ed25519-dalek, SHA-256, ECDH P-256, AES-256-GCM, HMAC-SHA256
 - **Frontend**: React + TypeScript + Tailwind (Vite)
 - **AI**: Groq + Gemini (direct browser calls)
 
